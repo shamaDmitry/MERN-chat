@@ -39,7 +39,12 @@ export const signup = async (req, res) => {
       generateToken(newUser._id, res);
       await newUser.save();
 
-      return res.status(201).json({ message: "User created successfully" });
+      return res.status(201).json({
+        _id: newUser._id,
+        email,
+        fullName,
+        profilePic: newUser.profilePic,
+      });
     } else {
       return res.status(400).json({ message: "Invalid user data" });
     }
@@ -56,12 +61,40 @@ export const login = async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
+
   try {
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: "Invalid credentials" });
     }
-  } catch (error) {}
-  return res.status(200).json({ email, password });
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(404).json({ message: "Invalid credentials" });
+    }
+
+    generateToken(user._id, res);
+
+    res.status(200).json({
+      _id: user._id,
+      email: user.email,
+      fullName: user.fullName,
+      profilePic: user.profilePic,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const logout = (req, res) => {
+  try {
+    res.cookie("jwt", "", {
+      httpOnly: true,
+      maxAge: 0,
+    });
+  } catch (error) {
+    console.log("error in logout controller", error);
+  }
 };
