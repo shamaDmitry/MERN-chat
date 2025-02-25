@@ -15,10 +15,10 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/", (req, res) => {
-  res.send("Hello World!");
-});
 app.use("/api/auth", authRoutes);
+app.use("/test", (req, res) => {
+  return res.status(200).send("Hello World!");
+});
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
