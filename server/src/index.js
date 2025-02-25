@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.routes.js";
 import dotenv from "dotenv";
 import connectDB from "./lib/db.js";
 import path from "path";
+import cors from "cors";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/test", (req, res) => {
