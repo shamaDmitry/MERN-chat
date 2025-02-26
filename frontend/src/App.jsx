@@ -4,16 +4,21 @@ import "./App.css";
 
 function App() {
   const [count, setCount] = useState(0);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     console.log("App mounted");
-
+    fetch("http://localhost:5000/test")
+      .then((res) => res.json())
+      .then((data) => setMessage(data.message));
     return () => {};
   }, []);
 
   return (
     <>
       <div>
+        <p>{message}</p>
+
         <a href="https://vite.dev" target="_blank">
           Vite
         </a>
