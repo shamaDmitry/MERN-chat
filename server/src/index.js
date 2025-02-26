@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
+import messageRoutes from "./routes/message.routes.js";
 import dotenv from "dotenv";
 import connectDB from "./lib/db.js";
 import path from "path";
@@ -18,8 +19,9 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/message", messageRoutes);
 app.use("/test", (req, res) => {
-  return res.status(200).send("Hello World!");
+  return res.status(200).json({ message: "Hello World!" });
 });
 
 if (process.env.NODE_ENV === "production") {
