@@ -25,10 +25,11 @@ export const getMessages = async (req, res) => {
 
     const messages = await Message.find({
       $or: [
-        { sender: senderId, receiver: userId },
-        { sender: userId, receiver: senderId },
+        { senderId: senderId, receiverId: userId },
+        { senderId: userId, receiverId: senderId },
       ],
-    }).sort({ createdAt: 1 });
+    });
+    // .sort({ createdAt: 1 });
 
     return res.status(200).json(messages);
   } catch (error) {
@@ -51,8 +52,8 @@ export const sendMessage = async (req, res) => {
     }
 
     const newMessage = new Message({
-      sender: senderId,
-      receiver: receiverId,
+      senderId,
+      receiverId,
       text,
       image: imageUrl,
     });

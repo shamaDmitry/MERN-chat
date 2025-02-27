@@ -1,44 +1,61 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { HomePage } from "./pages/HomePage";
+import { SignUpPage } from "./pages/SignUpPage";
+import { LoginPage } from "./pages/LoginPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { ProfilePage } from "./pages/ProfilePage";
+import { useAuthStore } from "./store/useAuthStore";
+import { useEffect } from "react";
+import { Loader } from "lucide-react";
+import { Toaster } from "react-hot-toast";
+import { AuthLayout } from "./layouts/AuthLayout";
+import { MainLayout } from "./layouts/MainLayout";
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [message, setMessage] = useState("");
+  const { user, checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
-    console.log("App mounted");
-    fetch("http://localhost:5000/test")
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message));
-    return () => {};
-  }, []);
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth && !user)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="animate-spin size-10" />
+      </div>
+    );
 
   return (
-    <>
-      <div>
-        <p>{message}</p>
+    <div>
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route
+            path="/signup"
+            element={!user ? <SignUpPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/login"
+            element={!user ? <LoginPage /> : <Navigate to="/" />}
+          />
+        </Route>
 
-        <a href="https://vite.dev" target="_blank">
-          Vite
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+        <Route element={<MainLayout />}>
+          <Route
+            path="/"
+            element={user ? <HomePage /> : <Navigate to="/login" />}
+          />
+
+          <Route path="/settings" element={<SettingsPage />} />
+
+          <Route
+            path="/profile"
+            element={user ? <ProfilePage /> : <Navigate to="/login" />}
+          />
+        </Route>
+      </Routes>
+
+      <Toaster />
+    </div>
   );
 }
 
