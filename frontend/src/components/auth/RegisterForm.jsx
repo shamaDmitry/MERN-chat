@@ -1,42 +1,41 @@
 import { Loader2, Lock, Mail, User } from "lucide-react";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
 import PasswordInput from "./PasswordInput";
+import { useForm } from "react-hook-form";
+import classNames from "classnames";
 
 export const RegisterForm = () => {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-  });
-
   const { signup, isSigningUp } = useAuthStore();
 
-  const validateForm = () => {
-    if (!formData.fullName.trim()) return toast.error("Full name is required");
-    if (!formData.email.trim()) return toast.error("Email is required");
-    if (!/\S+@\S+\.\S+/.test(formData.email))
-      return toast.error("Invalid email format");
-    if (!formData.password) return toast.error("Password is required");
-    if (formData.password.length < 6)
-      return toast.error("Password must be at least 6 characters");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: { fullName: "", email: "", password: "" },
+  });
 
-    return true;
+  const onSubmit = (data) => {
+    signup(data);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const success = validateForm();
-
-    if (success === true) signup(formData);
+  const onError = (errors) => {
+    Object.keys(errors).forEach((key) => {
+      toast.error(errors[key].message || `${key} is required`, {
+        duration: 1000,
+      });
+    });
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <form
+      className="space-y-6"
+      onSubmit={handleSubmit(onSubmit, onError)}
+      noValidate
+    >
       <div className="form-control">
-        <label className="label">
+        <label className="label mb-1">
           <span className="label-text font-medium">Full Name</span>
         </label>
 
@@ -47,18 +46,23 @@ export const RegisterForm = () => {
 
           <input
             type="text"
-            className={`input input-bordered w-full pl-10`}
+            autoComplete="off"
+            className={classNames(`input input-bordered w-full pl-10`, {
+              "input-error": errors.fullName,
+            })}
             placeholder="John Doe"
-            value={formData.fullName}
-            onChange={(e) =>
-              setFormData({ ...formData, fullName: e.target.value })
-            }
+            {...register("fullName", {
+              required: {
+                value: true,
+                message: "Full name is required",
+              },
+            })}
           />
         </div>
       </div>
 
       <div className="form-control">
-        <label className="label">
+        <label className="label mb-1">
           <span className="label-text font-medium">Email</span>
         </label>
 
@@ -68,27 +72,46 @@ export const RegisterForm = () => {
           </div>
 
           <input
+            autoComplete="off"
             type="email"
-            className={`input input-bordered w-full pl-10`}
+            className={classNames(`input input-bordered w-full pl-10`, {
+              "input-error": errors.email,
+            })}
             placeholder="you@example.com"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
+            {...register("email", {
+              required: {
+                value: true,
+                message: "Email is required",
+              },
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Invalid email address",
+              },
+            })}
           />
         </div>
       </div>
 
       <div className="form-control">
-        <label className="label">
+        <label className="label mb-1">
           <span className="label-text font-medium">Password</span>
         </label>
 
         <PasswordInput
-          value={formData.password}
-          onChange={(e) =>
-            setFormData({ ...formData, password: e.target.value })
-          }
+          autoComplete="off"
+          className={classNames(`input input-bordered w-full pl-10`, {
+            "input-error": errors.password,
+          })}
+          {...register("password", {
+            required: {
+              value: true,
+              message: "Password is required",
+            },
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters",
+            },
+          })}
           icon={<Lock className="size-5 text-base-content/40" />}
         />
       </div>
