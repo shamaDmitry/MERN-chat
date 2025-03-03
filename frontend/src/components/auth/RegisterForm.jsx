@@ -4,9 +4,11 @@ import { useAuthStore } from "../../store/useAuthStore";
 import PasswordInput from "./PasswordInput";
 import { useForm } from "react-hook-form";
 import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
 
 export const RegisterForm = () => {
   const { signup, isSigningUp } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -16,8 +18,10 @@ export const RegisterForm = () => {
     defaultValues: { fullName: "", email: "", password: "" },
   });
 
-  const onSubmit = (data) => {
-    signup(data);
+  const onSubmit = async (data) => {
+    await signup(data);
+
+    navigate("/");
   };
 
   const onError = (errors) => {

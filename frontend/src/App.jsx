@@ -26,7 +26,7 @@ function App() {
     );
 
   return (
-    <div>
+    <>
       <Routes>
         <Route element={<AuthLayout />}>
           <Route
@@ -55,7 +55,7 @@ function App() {
       </Routes>
 
       <Toaster />
-    </div>
+    </>
   );
 }
 
