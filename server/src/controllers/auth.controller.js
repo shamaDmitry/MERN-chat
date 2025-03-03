@@ -105,6 +105,7 @@ export const updateProfile = async (req, res) => {
   try {
     const { fullName, profilePic } = req.body;
     const userId = req.user._id;
+    let uploadResponce;
 
     if (!fullName && !profilePic) {
       return res
@@ -112,13 +113,15 @@ export const updateProfile = async (req, res) => {
         .json({ message: "Please provide either fullName or profilePic" });
     }
 
-    const uploadResponce = await cloudinary.uploader.upload(profilePic);
+    if (profilePic) {
+      uploadResponce = await cloudinary.uploader.upload(profilePic);
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         fullName,
-        profilePic: uploadResponce.secure_url,
+        profilePic: uploadResponce?.secure_url,
       },
       { new: true }
     ).select("-password");

@@ -1,7 +1,6 @@
 import { LogOut, Settings, User } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useState } from "react";
 import { Headline } from "@/components/Headline";
 import { Logo } from "@/components/Logo";
 import { ConfirmModal } from "./ConfirmModal";
@@ -80,30 +79,36 @@ export const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <NavLink
-                to={"/settings"}
-                className={`btn btn-sm gap-2 transition-colors`}
-              >
-                <Settings className="w-4 h-4" />
-                <span className="hidden sm:inline">Settings</span>
-              </NavLink>
+              <div className="tooltip tooltip-bottom" data-tip="Settings">
+                <NavLink
+                  to={"/settings"}
+                  className={`btn btn-sm gap-2 transition-colors`}
+                >
+                  <Settings className="w-4 h-4" />
+                  <span className="hidden sm:inline">Settings</span>
+                </NavLink>
+              </div>
 
               {user && (
                 <>
-                  <NavLink to={"/profile"} className={`btn btn-sm gap-2`}>
-                    <User className="size-5" />
-                    <span className="hidden sm:inline">Profile</span>
-                  </NavLink>
+                  <div className="tooltip tooltip-bottom" data-tip="Profile">
+                    <NavLink to={"/profile"} className={`btn btn-sm gap-2`}>
+                      <User className="size-5" />
+                      <span className="hidden sm:inline">Profile</span>
+                    </NavLink>
+                  </div>
 
-                  <button
-                    className="btn btn-sm"
-                    onClick={() =>
-                      document.getElementById("logout-modal").showModal()
-                    }
-                  >
-                    <LogOut className="size-5" />
-                    <span className="hidden sm:inline">Logout</span>
-                  </button>
+                  <div className="tooltip tooltip-bottom" data-tip="Logout">
+                    <button
+                      className="btn btn-sm outline-none focus-visible:outline-none"
+                      onClick={() =>
+                        document.getElementById("logout-modal").showModal()
+                      }
+                    >
+                      <LogOut className="size-5" />
+                      <span className="hidden sm:inline">Logout</span>
+                    </button>
+                  </div>
                 </>
               )}
             </div>

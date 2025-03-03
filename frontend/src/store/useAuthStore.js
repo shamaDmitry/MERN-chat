@@ -19,6 +19,8 @@ export const useAuthStore = create((set) => ({
 
       set({ user: res.data });
     } catch (error) {
+      console.log("useAuthStore error", error);
+
       set({ user: null });
     } finally {
       set({ isCheckingAuth: false });
@@ -36,10 +38,9 @@ export const useAuthStore = create((set) => ({
 
         set({ user: res.data });
       }
-
-      console.log("res", res);
     } catch (error) {
       console.log("useAuthStore error", error);
+
       toast.error(error.response.data.message);
     } finally {
       set({ isSigningUp: false });
@@ -59,9 +60,26 @@ export const useAuthStore = create((set) => ({
       }
     } catch (error) {
       console.log("useAuthStore error", error);
+
       toast.error(error.response.data.message);
     } finally {
       set({ isLoggingIng: false });
+    }
+  },
+
+  updateProfile: async (formData) => {
+    console.log("formData", formData);
+
+    try {
+      set({ isUpdatingProfile: true });
+
+      // const res = await axiosInstance.patch("/auth/update-profile", formData);
+    } catch (error) {
+      console.log("useAuthStore error", error);
+
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 
@@ -76,6 +94,7 @@ export const useAuthStore = create((set) => ({
       }
     } catch (error) {
       console.log("useAuthStore error", error);
+
       toast.error(error.response.data.message);
     }
   },

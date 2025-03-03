@@ -18,7 +18,10 @@ export const SettingsPage = () => {
             <button
               key={t}
               onClick={() => setTheme(t)}
-              className="cursor-pointer border flex flex-col items-center justify-center p-5 rounded-lg gap-2 border-base-content/20 hover:border-primary transition-colors"
+              className={classNames(
+                "cursor-pointer border flex flex-col items-center justify-center p-5 rounded-lg gap-2 border-base-content/20 hover:border-primary transition-colors",
+                { "bg-base-300": theme === t }
+              )}
             >
               <div
                 className="flex gap-2 bg-transparent flex-wrap items-center justify-center"
