@@ -1,3 +1,5 @@
+import { Headline } from "./Headline";
+
 export const ConfirmModal = ({
   id,
   handleConfirm,
@@ -5,11 +7,14 @@ export const ConfirmModal = ({
   title = "Are you sure?",
   confirmText = "Yes",
   cancelText = "Cancel",
+  dialogRef,
 }) => {
   return (
-    <dialog id={id} className="modal">
+    <dialog id={id} className="modal" ref={dialogRef}>
       <div className="modal-box text-center">
         <h3 className="font-bold text-lg mb-5">{title}</h3>
+
+        <Headline className="mb-8">{title}</Headline>
 
         <div className="flex gap-2 items-center justify-center">
           <button className="btn btn-success text-base" onClick={handleConfirm}>

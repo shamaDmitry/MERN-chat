@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, Trash2, User, UserIcon } from "lucide-react";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import { ConfirmModal } from "../components/ConfirmModal";
 export const ProfilePage = () => {
   const { user, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
+  const deletePhotoModalRef = useRef(null);
 
   const {
     register,
@@ -29,12 +30,16 @@ export const ProfilePage = () => {
     reader.onload = async () => {
       const base64Image = reader.result;
       setSelectedImg(base64Image);
-      await updateProfile({ profilePic: base64Image });
     };
   };
 
   const onSubmit = async (data) => {
     console.log("data", data);
+
+    await updateProfile({
+      fullName: data.fullName,
+      profilePic: selectedImg,
+    });
   };
 
   const onError = (errors) => {
@@ -59,7 +64,13 @@ export const ProfilePage = () => {
               <div className="flex flex-col items-center gap-4">
                 <div className="relative">
                   <div className="size-32 rounded-full object-cover border-4 flex items-center justify-center bg-base-100 overflow-hidden">
-                    <img src={selectedImg || user.profilePic} alt="Profile" />
+                    {(user.profilePic || selectedImg) && (
+                      <img
+                        src={user.profilePic || selectedImg}
+                        alt="Profile"
+                        className="h-full w-full object-cover"
+                      />
+                    )}
 
                     {!user.profilePic && <UserIcon className="size-10" />}
                   </div>
@@ -74,6 +85,7 @@ export const ProfilePage = () => {
                     )}
                   >
                     <Camera className="w-5 h-5 text-base-200" />
+
                     <input
                       type="file"
                       id="avatar-upload"
@@ -84,20 +96,16 @@ export const ProfilePage = () => {
                     />
                   </label>
 
-                  <button
-                    // onClick={() => {
-                    //   setSelectedImg(null);
-                    //   updateProfile({ profilePic: null });
-                    // }}
-                    onClick={() =>
-                      document.getElementById("delete-photo-modal").showModal()
-                    }
-                    type="button"
-                    className="absolute bottom-0 left-0 bg-red-500 hover:bg-red-600 p-2 rounded-full cursor-pointer transition-all duration-200"
-                    disabled={isUpdatingProfile}
-                  >
-                    <Trash2 className="w-5 h-5 text-white" />
-                  </button>
+                  {(user.profilePic || selectedImg) && (
+                    <button
+                      onClick={() => deletePhotoModalRef.current.showModal()}
+                      type="button"
+                      className="absolute bottom-0 left-0 bg-red-500 hover:bg-red-600 p-2 rounded-full cursor-pointer transition-all duration-200"
+                      disabled={isUpdatingProfile}
+                    >
+                      <Trash2 className="w-5 h-5 text-white" />
+                    </button>
+                  )}
                 </div>
 
                 <p className="text-sm text-zinc-400">
@@ -156,7 +164,7 @@ export const ProfilePage = () => {
               </div>
 
               <div className="flex justify-end">
-                <button type="submit" className="btn btn-sm">
+                <button type="submit" className="btn btn-success">
                   Save
                 </button>
               </div>
@@ -190,13 +198,20 @@ export const ProfilePage = () => {
       </div>
 
       <ConfirmModal
+        dialogRef={deletePhotoModalRef}
         id="delete-photo-modal"
-        handleCancel={() => {
-          console.log("cancel");
+        handleConfirm={async () => {
+          await updateProfile({
+            fullName: user.fullName,
+            profilePic: null,
+          });
+
+          setSelectedImg(null);
+
+          deletePhotoModalRef.current.close();
         }}
-        handleConfirm={() => {
-          console.log("ok");
-          document.getElementById("delete-photo-modal").close();
+        handleCancel={() => {
+          deletePhotoModalRef.current.close();
         }}
       />
     </>

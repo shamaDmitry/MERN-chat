@@ -104,6 +104,7 @@ export const logout = (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { fullName, profilePic } = req.body;
+
     const userId = req.user._id;
     let uploadResponce;
 
@@ -121,7 +122,7 @@ export const updateProfile = async (req, res) => {
       userId,
       {
         fullName,
-        profilePic: uploadResponce?.secure_url,
+        profilePic: uploadResponce?.secure_url || profilePic,
       },
       { new: true }
     ).select("-password");
