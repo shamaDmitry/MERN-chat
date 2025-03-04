@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { ConfirmModal } from "../components/ConfirmModal";
 
 export const ProfilePage = () => {
-  const { user, isUpdatingProfile, updateProfile } = useAuthStore();
+  const { user, isUpdatingProfile, updateProfile, setUser } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
   const deletePhotoModalRef = useRef(null);
 
@@ -34,12 +34,17 @@ export const ProfilePage = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("data", data);
-
-    await updateProfile({
+    const body = {
       fullName: data.fullName,
-      profilePic: selectedImg,
-    });
+      profilePic: selectedImg || user.profilePic || null,
+    };
+
+    console.log("body", body);
+    console.log("user.profilePic", user.profilePic);
+
+    const res = await updateProfile(body);
+
+    setUser(res);
   };
 
   const onError = (errors) => {
@@ -48,7 +53,7 @@ export const ProfilePage = () => {
 
   return (
     <>
-      <div className="min-h-screen pt-20">
+      <div className="min-h-screen">
         <div className="max-w-2xl mx-auto p-4 py-8">
           <div className="bg-base-300 rounded-xl p-6 space-y-8">
             <div className="text-center">
@@ -66,7 +71,7 @@ export const ProfilePage = () => {
                   <div className="size-32 rounded-full object-cover border-4 flex items-center justify-center bg-base-100 overflow-hidden">
                     {(user.profilePic || selectedImg) && (
                       <img
-                        src={user.profilePic || selectedImg}
+                        src={selectedImg || user.profilePic}
                         alt="Profile"
                         className="h-full w-full object-cover"
                       />
@@ -164,7 +169,11 @@ export const ProfilePage = () => {
               </div>
 
               <div className="flex justify-end">
-                <button type="submit" className="btn btn-success">
+                <button
+                  disabled={isUpdatingProfile}
+                  type="submit"
+                  className="btn btn-success"
+                >
                   Save
                 </button>
               </div>
@@ -201,13 +210,13 @@ export const ProfilePage = () => {
         dialogRef={deletePhotoModalRef}
         id="delete-photo-modal"
         handleConfirm={async () => {
-          await updateProfile({
+          const res = await updateProfile({
             fullName: user.fullName,
             profilePic: null,
           });
 
           setSelectedImg(null);
-
+          setUser(res);
           deletePhotoModalRef.current.close();
         }}
         handleCancel={() => {

@@ -4,6 +4,9 @@ import { SignUpPage } from "./pages/SignUpPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { ChatPage } from "./pages/ChatPage";
+import { EmptyChat } from "./pages/EmptyChat";
+
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
 import { useEffect } from "react";
@@ -17,8 +20,10 @@ function App() {
   const { theme } = useThemeStore();
 
   useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+
     checkAuth();
-  }, [checkAuth]);
+  }, [checkAuth, theme]);
 
   if (isCheckingAuth && !user)
     return (
@@ -28,7 +33,7 @@ function App() {
     );
 
   return (
-    <div className="min-h-screen" data-theme={theme}>
+    <div className="min-h-screen">
       <Routes>
         <Route element={<AuthLayout />}>
           <Route
@@ -45,7 +50,10 @@ function App() {
           <Route
             path="/"
             element={user ? <HomePage /> : <Navigate to="/login" />}
-          />
+          >
+            <Route index element={<EmptyChat />} />
+            <Route path="chat/:userId" element={<ChatPage />} />
+          </Route>
 
           <Route path="/settings" element={<SettingsPage />} />
 

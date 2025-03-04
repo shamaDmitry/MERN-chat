@@ -13,6 +13,10 @@ const defaultState = {
 export const useAuthStore = create((set) => ({
   ...defaultState,
 
+  setUser: (user) => {
+    set({ user });
+  },
+
   checkAuth: async () => {
     try {
       const res = await axiosInstance("auth/check-auth");
@@ -75,6 +79,7 @@ export const useAuthStore = create((set) => ({
 
       if (res.status === 200) {
         toast.success("Updated successfully");
+
         return res.data;
       }
     } catch (error) {

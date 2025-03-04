@@ -4,6 +4,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Headline } from "@/components/Headline";
 import { Logo } from "@/components/Logo";
 import { ConfirmModal } from "./ConfirmModal";
+import classNames from "classnames";
 
 export const Navbar = () => {
   const { logout, user } = useAuthStore();
@@ -15,57 +16,9 @@ export const Navbar = () => {
   };
 
   return (
-    // <div className="container">
-    //   <div className="flex justify-between items-center p-4 border-b">
-    //     <nav className="flex gap-2">
-    //       <NavLink className="flex py-2 px-4 border" to="/">
-    //         Home
-    //       </NavLink>
-    //       <NavLink className="flex py-2 px-4 border" to="/settings">
-    //         settings
-    //       </NavLink>
-    //       <NavLink className="flex py-2 px-4 border" to="/profile">
-    //         profile
-    //       </NavLink>
-    //     </nav>
-
-    //     <div className="flex gap-2 items-center">
-    //       <div className="avatar avatar-online avatar-placeholder">
-    //         <div className="bg-neutral text-neutral-content w-16 rounded-full">
-    //           <span className="text-xl">{user?.fullName}</span>
-    //         </div>
-    //       </div>
-
-    //       <div className="tooltip tooltip-bottom" data-tip="Log out">
-    //         <button
-    //           className="btn btn-square"
-    //           onClick={() => document.getElementById("my_modal_2").showModal()}
-    //         >
-    //           <LogOut className="size-4" />
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </div>
-
-    //   <dialog id="my_modal_2" className="modal">
-    //     <div className="modal-box text-center">
-    //       <h3 className="font-bold text-lg mb-5">Log out?</h3>
-
-    //       <div className="flex gap-2 items-center justify-center">
-    //         <button className="btn btn-secondary" onClick={handleLogOut}>
-    //           Yes
-    //         </button>
-    //         <button className="btn btn-secondary">No</button>
-    //       </div>
-    //     </div>
-    //     <form method="dialog" className="modal-backdrop">
-    //       <button>close</button>
-    //     </form>
-    //   </dialog>
-    // </div>
     <>
-      <header className="border-b border-base-300 backdrop-blur-lg bg-base-100/80">
-        <div className="container mx-auto px-4 h-16">
+      <header className="border-b border-base-300 backdrop-blur-lg bg-base-100/80 mb-8">
+        <div className="container h-16">
           <div className="flex items-center justify-between h-full">
             <div className="flex items-center gap-8">
               <NavLink
@@ -82,7 +35,11 @@ export const Navbar = () => {
               <div className="tooltip tooltip-bottom" data-tip="Settings">
                 <NavLink
                   to={"/settings"}
-                  className={`btn btn-sm gap-2 transition-colors`}
+                  className={({ isActive }) => {
+                    return classNames("btn btn-sm gap-2 transition-colors", {
+                      "btn-primary": isActive,
+                    });
+                  }}
                 >
                   <Settings className="w-4 h-4" />
                   <span className="hidden sm:inline">Settings</span>
@@ -92,8 +49,26 @@ export const Navbar = () => {
               {user && (
                 <>
                   <div className="tooltip tooltip-bottom" data-tip="Profile">
-                    <NavLink to={"/profile"} className={`btn btn-sm gap-2`}>
-                      <User className="size-5" />
+                    <NavLink
+                      to={"/profile"}
+                      className={({ isActive }) => {
+                        return classNames(
+                          "btn btn-sm gap-2 transition-colors",
+                          {
+                            "btn-primary": isActive,
+                          }
+                        );
+                      }}
+                    >
+                      {user.profilePic ? (
+                        <img
+                          src={user.profilePic}
+                          alt={user.fullName}
+                          className="w-6 h-6 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="size-5" />
+                      )}
                       <span className="hidden sm:inline">Profile</span>
                     </NavLink>
                   </div>
