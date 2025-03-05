@@ -5,7 +5,6 @@ const defaultState = {
   isLoadingUsers: true,
   isLoadingMessages: true,
   isMessageSending: false,
-  onlineUsers: [],
   messages: [],
   usersForSidebar: [],
 };

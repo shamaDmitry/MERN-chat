@@ -4,12 +4,11 @@ import { useEffect } from "react";
 import { User } from "lucide-react";
 import classNames from "classnames";
 import { useAuthStore } from "../store/useAuthStore";
+import { Headline } from "../components/Headline";
 
 export const HomePage = () => {
-  const { usersForSidebar, getUsersForSidebar, isLoadingUsers, onlineUsers } =
-    useChat();
-
-  const { user: currentUser } = useAuthStore();
+  const { usersForSidebar, getUsersForSidebar, isLoadingUsers } = useChat();
+  const { user: currentUser, onlineUsers } = useAuthStore();
 
   useEffect(() => {
     getUsersForSidebar();
@@ -44,61 +43,110 @@ export const HomePage = () => {
                 <span className="loading loading-dots loading-md"></span>
               </div>
             ) : (
-              <ul className="menu p-0 text-base-content w-full">
-                {usersForSidebar.map((user) => {
-                  return (
-                    <NavLink
-                      to={`/chat/${user._id}`}
-                      key={user._id}
-                      className={({ isActive }) => {
-                        return classNames({
-                          "flex items-center gap-2 py-2 px-2 rounded-md hover:bg-base-200": true,
-                          "bg-base-200": isActive,
-                        });
-                      }}
-                    >
-                      <div className="relative mx-auto lg:mx-0">
-                        {user.profilePic ? (
-                          <img
-                            src={user.profilePic}
-                            alt={user.fullName}
-                            className="size-10 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="size-10 rounded-full object-cover bg-base-300 flex items-center justify-center">
-                            <User className="size-5" />
-                          </div>
-                        )}
+              <>
+                <div className="mb-5">
+                  <Headline tag="h5">You:</Headline>
 
-                        <span
-                          className={classNames(
-                            "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-base-100",
-                            // {
-                            //   "bg-green-500": onlineUsers.includes(user._id),
-                            //   "bg-red-500": !onlineUsers.includes(user._id),
-                            // }
-                            {
-                              "bg-green-500": user._id === currentUser._id,
-                              "bg-red-500": user._id !== currentUser._id,
-                            }
-                          )}
+                  <div className="flex items-center gap-2 py-2 px-2 rounded-md">
+                    <div className="relative mx-auto lg:mx-0">
+                      {currentUser.profilePic ? (
+                        <img
+                          src={currentUser.profilePic}
+                          alt={currentUser.fullName}
+                          className="size-10 rounded-full object-cover"
                         />
-                      </div>
+                      ) : (
+                        <div className="size-10 rounded-full object-cover bg-base-300 flex items-center justify-center">
+                          <User className="size-5" />
+                        </div>
+                      )}
 
-                      <div className="block text-left min-w-0">
-                        <div className="font-medium truncate">
-                          {user.fullName}
-                        </div>
-                        <div className="text-sm text-zinc-400">
-                          {onlineUsers.includes(user._id)
-                            ? "Online"
-                            : "Offline"}
-                        </div>
+                      <span
+                        className={classNames(
+                          "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-base-100",
+                          {
+                            "bg-green-500": onlineUsers.includes(
+                              currentUser._id
+                            ),
+                            "bg-red-500": !onlineUsers.includes(
+                              currentUser._id
+                            ),
+                          }
+                        )}
+                      />
+                    </div>
+
+                    <div className="block text-left min-w-0">
+                      <div className="font-medium truncate">
+                        {currentUser.fullName}
                       </div>
-                    </NavLink>
-                  );
-                })}
-              </ul>
+                      <div className="text-sm text-zinc-400">
+                        {onlineUsers.includes(currentUser._id)
+                          ? "Online"
+                          : "Offline"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-5">
+                  <Headline tag="h5">Users:</Headline>
+
+                  <ul className="menu p-0 text-base-content w-full">
+                    {usersForSidebar.map((user) => {
+                      return (
+                        <NavLink
+                          to={`/chat/${user._id}`}
+                          key={user._id}
+                          className={({ isActive }) => {
+                            return classNames({
+                              "flex items-center gap-2 py-2 px-2 rounded-md hover:bg-base-200": true,
+                              "bg-base-200": isActive,
+                            });
+                          }}
+                        >
+                          <div className="relative mx-auto lg:mx-0">
+                            {user.profilePic ? (
+                              <img
+                                src={user.profilePic}
+                                alt={user.fullName}
+                                className="size-10 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="size-10 rounded-full object-cover bg-base-300 flex items-center justify-center">
+                                <User className="size-5" />
+                              </div>
+                            )}
+
+                            <span
+                              className={classNames(
+                                "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-base-100",
+                                {
+                                  "bg-green-500": onlineUsers.includes(
+                                    user._id
+                                  ),
+                                  "bg-red-500": !onlineUsers.includes(user._id),
+                                }
+                              )}
+                            />
+                          </div>
+
+                          <div className="block text-left min-w-0">
+                            <div className="font-medium truncate">
+                              {user.fullName}
+                            </div>
+                            <div className="text-sm text-zinc-400">
+                              {onlineUsers.includes(user._id)
+                                ? "Online"
+                                : "Offline"}
+                            </div>
+                          </div>
+                        </NavLink>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </>
             )}
           </div>
         </div>

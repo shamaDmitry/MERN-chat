@@ -27,6 +27,7 @@ export const useAuthStore = create((set, get) => ({
       const res = await axiosInstance("auth/check-auth");
 
       set({ user: res.data });
+
       get().connectSocket();
     } catch (error) {
       console.log("useAuthStore error", error);
@@ -47,6 +48,8 @@ export const useAuthStore = create((set, get) => ({
         toast.success("Account created successfully");
 
         set({ user: res.data });
+
+        get().connectSocket();
       }
     } catch (error) {
       console.log("useAuthStore error", error);
@@ -67,6 +70,8 @@ export const useAuthStore = create((set, get) => ({
         toast.success("Login successfully");
 
         set({ user: res.data });
+
+        get().connectSocket();
       }
     } catch (error) {
       console.log("useAuthStore error", error);
@@ -105,7 +110,7 @@ export const useAuthStore = create((set, get) => ({
         toast.success(res.data.message);
 
         set({ user: null });
-        // get().disconnect();
+        get().disconnectSocket();
       }
     } catch (error) {
       console.log("useAuthStore error", error);
@@ -119,11 +124,22 @@ export const useAuthStore = create((set, get) => ({
 
     if (!user || get().socket?.connected) return;
 
-    const socket = io(BASE_URL);
-
-    console.log("socket", socket);
+    const socket = io(BASE_URL, {
+      query: { userId: user._id },
+    });
 
     socket.connect();
+
+    set({ socket });
+
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
   },
-  disconnectSocket: () => {},
+
+  disconnectSocket: () => {
+    if (get().socket?.connected) {
+      get().socket.disconnect();
+    }
+  },
 }));
