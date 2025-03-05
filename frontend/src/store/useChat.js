@@ -4,12 +4,13 @@ import { axiosInstance } from "../lib/axios";
 const defaultState = {
   isLoadingUsers: true,
   isLoadingMessages: true,
+  isMessageSending: false,
   onlineUsers: [],
   messages: [],
   usersForSidebar: [],
 };
 
-export const useChat = create((set) => ({
+export const useChat = create((set, get) => ({
   ...defaultState,
 
   getUsersForSidebar: async () => {
@@ -30,7 +31,6 @@ export const useChat = create((set) => ({
     try {
       const res = await axiosInstance(`message/${userId}`);
 
-      console.log("res", res);
       if (res.status === 200) {
         set({ messages: res.data });
       }
@@ -42,7 +42,9 @@ export const useChat = create((set) => ({
   },
 
   sendMessage: async (receiverId, messageData) => {
-    const { messages } = useChat.getState();
+    const { messages } = get();
+
+    set({ isMessageSending: true });
 
     try {
       const res = await axiosInstance.post(
@@ -50,15 +52,14 @@ export const useChat = create((set) => ({
         messageData
       );
 
-      if (res.status === 200) {
+      if (res.status === 201) {
         set({ messages: [...messages, res.data] });
       }
-
-      console.log("res", res);
     } catch (error) {
       console.log("sendMessage", error);
     } finally {
       console.log("finally");
+      set({ isMessageSending: false });
     }
   },
 }));

@@ -3,10 +3,13 @@ import { useChat } from "../store/useChat";
 import { useEffect } from "react";
 import { User } from "lucide-react";
 import classNames from "classnames";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const HomePage = () => {
   const { usersForSidebar, getUsersForSidebar, isLoadingUsers, onlineUsers } =
     useChat();
+
+  const { user: currentUser } = useAuthStore();
 
   useEffect(() => {
     getUsersForSidebar();
@@ -70,9 +73,13 @@ export const HomePage = () => {
                         <span
                           className={classNames(
                             "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-base-100",
+                            // {
+                            //   "bg-green-500": onlineUsers.includes(user._id),
+                            //   "bg-red-500": !onlineUsers.includes(user._id),
+                            // }
                             {
-                              "bg-green-500": onlineUsers.includes(user._id),
-                              "bg-red-500": !onlineUsers.includes(user._id),
+                              "bg-green-500": user._id === currentUser._id,
+                              "bg-red-500": user._id !== currentUser._id,
                             }
                           )}
                         />

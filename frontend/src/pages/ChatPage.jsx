@@ -2,11 +2,17 @@ import { MessagesSkeleton } from "@/components/skeletons/MessagesSkeleton";
 import { Link, useParams } from "react-router-dom";
 import { useChat } from "../store/useChat";
 import { useEffect, useState } from "react";
-import { ChevronLeft, User2 } from "lucide-react";
+import { ChevronLeft, Loader, User2 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 
 export const ChatPage = () => {
-  const { getMessages, isLoadingMessages, sendMessage, messages } = useChat();
+  const {
+    getMessages,
+    isLoadingMessages,
+    sendMessage,
+    messages,
+    isMessageSending,
+  } = useChat();
   const { user } = useAuthStore();
   const [message, setMessage] = useState("");
   const { userId } = useParams();
@@ -18,11 +24,11 @@ export const ChatPage = () => {
   const handleSendMessage = async () => {
     if (message.trim() === "") return;
 
-    const res = await sendMessage(userId, {
+    await sendMessage(userId, {
       text: message,
     });
 
-    console.log("res", res);
+    setMessage("");
   };
 
   return (
@@ -38,11 +44,9 @@ export const ChatPage = () => {
       {isLoadingMessages ? (
         <MessagesSkeleton count={4} className="w-full" />
       ) : (
-        <div className="flex-1 flex flex-col">
-          <div>
+        <div className="flex-1 flex flex-col relative">
+          <div className="space-y-4">
             {messages.map((message) => {
-              console.log("message", message);
-
               return (
                 <div
                   key={message._id}
@@ -71,16 +75,25 @@ export const ChatPage = () => {
             })}
           </div>
 
-          <div className="mt-auto p-4 flex items-center gap-2">
+          <div className="bg-primary-content sticky bottom-0 left-0 mt-auto p-4 flex items-center gap-2">
             <textarea
+              value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
               }}
               className="input w-full"
             />
 
-            <button className="btn btn-primary" onClick={handleSendMessage}>
-              Send
+            <button
+              disabled={isMessageSending}
+              className="btn btn-primary w-24"
+              onClick={handleSendMessage}
+            >
+              {isMessageSending ? (
+                <Loader className="size-5 animate-spin" />
+              ) : (
+                "Send"
+              )}
             </button>
           </div>
         </div>
