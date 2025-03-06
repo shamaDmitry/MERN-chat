@@ -48,7 +48,7 @@ export const HomePage = () => {
                   <Headline tag="h5">You:</Headline>
 
                   <div className="flex items-center gap-2 py-2 px-2 rounded-md">
-                    <div className="relative mx-auto lg:mx-0">
+                    <div className="relative">
                       {currentUser.profilePic ? (
                         <img
                           src={currentUser.profilePic}
@@ -105,7 +105,7 @@ export const HomePage = () => {
                             });
                           }}
                         >
-                          <div className="relative mx-auto lg:mx-0">
+                          <div className="relative">
                             {user.profilePic ? (
                               <img
                                 src={user.profilePic}

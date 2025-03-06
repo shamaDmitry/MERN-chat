@@ -1,25 +1,59 @@
 import { MessagesSkeleton } from "@/components/skeletons/MessagesSkeleton";
 import { Link, useParams } from "react-router-dom";
 import { useChat } from "../store/useChat";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, Loader, User2 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 
 export const ChatPage = () => {
+  const endContainerRef = useRef(null);
+
   const {
     getMessages,
     isLoadingMessages,
     sendMessage,
     messages,
     isMessageSending,
+    subscribeToMessages,
+    unSubscribeToMessages,
+    setMessages,
   } = useChat();
-  const { user } = useAuthStore();
+
+  const { user, socket } = useAuthStore();
+
   const [message, setMessage] = useState("");
   const { userId } = useParams();
+  const [isRemouteUserTyping, setIsRemouteUserTyping] = useState(false);
 
   useEffect(() => {
     getMessages(userId);
-  }, [getMessages, userId]);
+
+    return () => {
+      setMessages([]);
+    };
+  }, [getMessages, setMessages, userId]);
+
+  useEffect(() => {
+    subscribeToMessages();
+
+    return () => {
+      unSubscribeToMessages();
+    };
+  }, [userId, subscribeToMessages, unSubscribeToMessages]);
+
+  useEffect(() => {
+    endContainerRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  useEffect(() => {
+    socket.on("remoteUserIsTyping", ({ receiverId }) => {
+      setIsRemouteUserTyping(true);
+    });
+
+    return () => {
+      socket.off("remoteUserIsTyping");
+    };
+  }, [socket, userId]);
 
   const handleSendMessage = async () => {
     if (message.trim() === "") return;
@@ -29,6 +63,15 @@ export const ChatPage = () => {
     });
 
     setMessage("");
+  };
+
+  const handleTyping = (e) => {
+    setMessage(e.target.value);
+
+    socket.emit("userIsTyping", {
+      receiverId: userId,
+      senderId: user._id,
+    });
   };
 
   return (
@@ -45,7 +88,7 @@ export const ChatPage = () => {
         <MessagesSkeleton count={4} className="w-full" />
       ) : (
         <div className="flex-1 flex flex-col relative">
-          <div className="space-y-4">
+          <div className="space-y-4 mb-10">
             {messages.map((message) => {
               return (
                 <div
@@ -74,12 +117,19 @@ export const ChatPage = () => {
               );
             })}
           </div>
+          <div ref={endContainerRef} />
 
           <div className="bg-primary-content sticky bottom-0 left-0 mt-auto p-4 flex items-center gap-2">
+            {isRemouteUserTyping && (
+              <div className="chat chat-start">
+                <div className="chat-bubble opacity-70">typing...</div>
+              </div>
+            )}
+
             <textarea
               value={message}
               onChange={(e) => {
-                setMessage(e.target.value);
+                handleTyping(e);
               }}
               className="input w-full"
             />

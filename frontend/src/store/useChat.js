@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 
+import { useAuthStore } from "./useAuthStore";
+
 const defaultState = {
   isLoadingUsers: true,
   isLoadingMessages: true,
@@ -40,6 +42,10 @@ export const useChat = create((set, get) => ({
     }
   },
 
+  setMessages: (messages) => {
+    set({ messages });
+  },
+
   sendMessage: async (receiverId, messageData) => {
     const { messages } = get();
 
@@ -60,5 +66,21 @@ export const useChat = create((set, get) => ({
       console.log("finally");
       set({ isMessageSending: false });
     }
+  },
+
+  subscribeToMessages: () => {
+    const socket = useAuthStore.getState().socket;
+
+    socket.on("receiveMessage", (newMessage) => {
+      const { messages } = get();
+
+      set({ messages: [...messages, newMessage] });
+    });
+  },
+
+  unSubscribeToMessages: () => {
+    const socket = useAuthStore.getState().socket;
+
+    socket.off("receiveMessage");
   },
 }));

@@ -13,6 +13,10 @@ const io = new Server(server, {
 
 const userSocketMap = {};
 
+export const getReceiverSocketId = (receiverId) => {
+  return userSocketMap[receiverId];
+};
+
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
 
@@ -21,6 +25,12 @@ io.on("connection", (socket) => {
   }
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  socket.on("userIsTyping", ({ receiverId, senderId }) => {
+    socket.to(getReceiverSocketId(receiverId)).emit("remoteUserIsTyping", {
+      receiverId,
+    });
+  });
 
   socket.on("disconnect", () => {
     delete userSocketMap[userId];

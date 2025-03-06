@@ -39,9 +39,6 @@ export const ProfilePage = () => {
       profilePic: selectedImg || user.profilePic || null,
     };
 
-    console.log("body", body);
-    console.log("user.profilePic", user.profilePic);
-
     const res = await updateProfile(body);
 
     setUser(res);
