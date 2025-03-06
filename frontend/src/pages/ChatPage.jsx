@@ -4,6 +4,7 @@ import { useChat } from "../store/useChat";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, Loader, User2 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import classNames from "classnames";
 
 export const ChatPage = () => {
   const endContainerRef = useRef(null);
@@ -89,6 +90,10 @@ export const ChatPage = () => {
       ) : (
         <div className="flex-1 flex flex-col relative">
           <div className="space-y-4 mb-10">
+            {messages.length === 0 && (
+              <p className="text-center">No messages yet</p>
+            )}
+
             {messages.map((message) => {
               return (
                 <div
@@ -119,32 +124,40 @@ export const ChatPage = () => {
           </div>
           <div ref={endContainerRef} />
 
-          <div className="bg-primary-content sticky bottom-0 left-0 mt-auto p-4 flex items-center gap-2">
+          <div className="sticky bottom-0 left-0 mt-auto">
             {isRemouteUserTyping && (
-              <div className="chat chat-start">
-                <div className="chat-bubble opacity-70">typing...</div>
+              <div className="mb-2 flex items-center gap-2">
+                <div
+                  className={classNames(
+                    "animate-pulse loading loading-dots size-4"
+                  )}
+                />
+
+                <div className="text-sm font-medium">is typing</div>
               </div>
             )}
 
-            <textarea
-              value={message}
-              onChange={(e) => {
-                handleTyping(e);
-              }}
-              className="input w-full"
-            />
+            <div className="bg-primary-content  p-4 flex items-center gap-2">
+              <textarea
+                value={message}
+                onChange={(e) => {
+                  handleTyping(e);
+                }}
+                className="input w-full"
+              />
 
-            <button
-              disabled={isMessageSending}
-              className="btn btn-primary w-24"
-              onClick={handleSendMessage}
-            >
-              {isMessageSending ? (
-                <Loader className="size-5 animate-spin" />
-              ) : (
-                "Send"
-              )}
-            </button>
+              <button
+                disabled={isMessageSending}
+                className="btn btn-primary w-24"
+                onClick={handleSendMessage}
+              >
+                {isMessageSending ? (
+                  <Loader className="size-5 animate-spin" />
+                ) : (
+                  "Send"
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
