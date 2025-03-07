@@ -9,6 +9,7 @@ const defaultState = {
   isMessageSending: false,
   messages: [],
   usersForSidebar: [],
+  receiver: null,
 };
 
 export const useChat = create((set, get) => ({
@@ -16,7 +17,7 @@ export const useChat = create((set, get) => ({
 
   getUsersForSidebar: async () => {
     try {
-      const res = await axiosInstance("message/users");
+      const res = await axiosInstance("users/sidebar");
 
       if (res.status === 200) {
         set({ usersForSidebar: res.data });
@@ -82,5 +83,23 @@ export const useChat = create((set, get) => ({
     const socket = useAuthStore.getState().socket;
 
     socket.off("receiveMessage");
+  },
+
+  setReceiver: (receiver) => {
+    set({ receiver });
+  },
+
+  getReceiver: async (receiverId) => {
+    try {
+      const res = await axiosInstance(`users/${receiverId}`);
+
+      if (res.status === 200) {
+        set({ receiver: res.data });
+      }
+    } catch (error) {
+      console.log("getMessage", error);
+    } finally {
+      set({ isLoadingMessages: false });
+    }
   },
 }));

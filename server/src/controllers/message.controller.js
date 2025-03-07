@@ -1,23 +1,6 @@
-import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import cloudinary from "../lib/cloudinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
-
-export const getUsersForSidebar = async (req, res) => {
-  try {
-    const loggedInUserId = req.user._id;
-
-    const users = await User.find({ _id: { $ne: loggedInUserId } }).select(
-      "-password"
-    );
-
-    return res.status(200).json(users);
-  } catch (error) {
-    console.log("error in get users for sidebar controller", error);
-
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
 
 export const getMessages = async (req, res) => {
   try {
@@ -30,7 +13,6 @@ export const getMessages = async (req, res) => {
         { senderId: userId, receiverId: senderId },
       ],
     });
-    // .sort({ createdAt: 1 });
 
     return res.status(200).json(messages);
   } catch (error) {

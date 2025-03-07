@@ -33,7 +33,7 @@ function App() {
     );
 
   return (
-    <div className="min-h-screen">
+    <div className="h-screen">
       <Routes>
         <Route element={<AuthLayout />}>
           <Route

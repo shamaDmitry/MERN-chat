@@ -26,9 +26,15 @@ io.on("connection", (socket) => {
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  socket.on("userIsTyping", ({ receiverId, senderId }) => {
-    socket.to(getReceiverSocketId(receiverId)).emit("remoteUserIsTyping", {
-      receiverId,
+  socket.on("userIsTyping", ({ receiverId }) => {
+    socket.to(getReceiverSocketId(receiverId)).emit("userIsTyping", {
+      isTyping: true,
+    });
+  });
+
+  socket.on("userIsStopTyping", ({ isTyping, receiverId }) => {
+    socket.to(getReceiverSocketId(receiverId)).emit("userIsStopTyping", {
+      isTyping,
     });
   });
 
