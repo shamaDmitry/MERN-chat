@@ -1,0 +1,19 @@
+import express from "express";
+import { protectRoute } from "../middleware/auth.middleware.js";
+import {
+  createRoom,
+  joinRoom,
+  leaveRoom,
+  getRooms,
+  getRoom,
+} from "../controllers/room.controller.js";
+
+const router = express.Router();
+
+router.get("/all", protectRoute, getRooms);
+router.get("/:roomId", protectRoute, getRoom);
+router.post("/create", protectRoute, createRoom);
+router.post("/join/:roomId", protectRoute, joinRoom);
+router.post("/leave/:roomId", protectRoute, leaveRoom);
+
+export default router;

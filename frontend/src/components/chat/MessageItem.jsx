@@ -29,17 +29,20 @@ export const MessageItem = ({ message, receiver }) => {
         {!isCurrentUser && receiver?.fullName}
 
         <time className="text-xs opacity-50 ml-2">
-          {new Date(message.createdAt).toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          })}
-
           {dayjs(message.createdAt).format("DD/MM/YYYY HH:mm:ss")}
         </time>
       </div>
 
-      <div className="chat-bubble">{message.text}</div>
+      <div className="chat-bubble flex flex-col">
+        {message.image && (
+          <img
+            src={message.image}
+            alt="Attachment"
+            className="sm:max-w-[200px] rounded-md mb-2"
+          />
+        )}
+        {message.text && <p>{message.text}</p>}
+      </div>
     </div>
   );
 };

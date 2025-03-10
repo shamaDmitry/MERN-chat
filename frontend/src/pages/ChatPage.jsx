@@ -2,10 +2,11 @@ import { MessagesSkeleton } from "@/components/skeletons/MessagesSkeleton";
 import { Link, useParams } from "react-router-dom";
 import { useChat } from "@/store/useChat";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, Loader } from "lucide-react";
+import { ChevronLeft, Image, Loader, Send, X } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import classNames from "classnames";
 import { MessageItem } from "@/components/chat/MessageItem";
+import toast from "react-hot-toast";
 
 export const ChatPage = () => {
   const endContainerRef = useRef(null);
@@ -29,6 +30,8 @@ export const ChatPage = () => {
   const [message, setMessage] = useState("");
   const { userId } = useParams();
   const [isRemouteUserTyping, setIsRemouteUserTyping] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     getMessages(userId);
@@ -57,9 +60,15 @@ export const ChatPage = () => {
 
     await sendMessage(userId, {
       text: message,
+      image: imagePreview,
     });
 
+    console.log({ message, imagePreview });
+
     setMessage("");
+    setImagePreview(null);
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleTyping = (e) => {
@@ -69,6 +78,25 @@ export const ChatPage = () => {
       receiverId: userId,
       senderId: user._id,
     });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   useEffect(() => {
@@ -118,6 +146,8 @@ export const ChatPage = () => {
               )}
 
               {messages.map((message) => {
+                console.log("message", message);
+
                 return (
                   <MessageItem
                     key={message._id}
@@ -129,38 +159,85 @@ export const ChatPage = () => {
             </div>
 
             <div className="mt-auto">
-              {isRemouteUserTyping && (
-                <div className="mb-2 flex items-center justify-end gap-2">
-                  <div
-                    className={classNames(
-                      "animate-pulse loading loading-dots size-4"
-                    )}
+              <div className="p-4">
+                <div className="relative">
+                  {isRemouteUserTyping && (
+                    <div className="absolute bottom-0 right-0 mb-2 flex items-center justify-end gap-2 opacity-70">
+                      <div
+                        className={classNames(
+                          "animate-pulse loading loading-dots size-4"
+                        )}
+                      />
+
+                      <div className="text-xs font-medium">typing</div>
+                    </div>
+                  )}
+
+                  {imagePreview && (
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="relative">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
+                        />
+                        <button
+                          onClick={removeImage}
+                          className="absolute -top-1.5 -right-1.5 w-5 h-5 btn btn-secondary btn-circle"
+                          type="button"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
                   />
 
-                  <div className="text-sm font-medium">is typing</div>
+                  <textarea
+                    placeholder="Type a message..."
+                    value={message}
+                    onChange={(e) => {
+                      handleTyping(e);
+                    }}
+                    className="input w-full min-h-10 max-h-20"
+                  />
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className={classNames(
+                        "btn btn-circle text-base-content/50",
+                        {
+                          "text-primary": imagePreview,
+                        }
+                      )}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Image size={20} />
+                    </button>
+
+                    <button
+                      disabled={isMessageSending}
+                      className="btn btn-circle text-base-content/50"
+                      onClick={handleSendMessage}
+                    >
+                      {isMessageSending ? (
+                        <Loader className="size-5 animate-spin" />
+                      ) : (
+                        <Send size={20} />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              )}
-
-              <div className="bg-primary-content  p-4 flex items-center gap-2">
-                <textarea
-                  value={message}
-                  onChange={(e) => {
-                    handleTyping(e);
-                  }}
-                  className="input w-full"
-                />
-
-                <button
-                  disabled={isMessageSending}
-                  className="btn btn-primary w-24"
-                  onClick={handleSendMessage}
-                >
-                  {isMessageSending ? (
-                    <Loader className="size-5 animate-spin" />
-                  ) : (
-                    "Send"
-                  )}
-                </button>
               </div>
             </div>
           </div>

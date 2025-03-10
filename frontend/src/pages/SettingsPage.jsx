@@ -12,39 +12,47 @@ export const SettingsPage = () => {
         Current theme: {theme}
       </Headline>
 
-      <div className="grid grid-cols-2 gap-8 lg:grid-cols-8 mb-8">
+      <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 mb-8">
         {THEMES.map((t) => {
           return (
             <button
               key={t}
+              data-theme={t}
               onClick={() => setTheme(t)}
               className={classNames(
-                "cursor-pointer border flex flex-col items-center justify-center p-5 rounded-lg gap-2 border-base-content/20 hover:border-primary transition-colors",
-                { "bg-base-300": theme === t }
+                "cursor-pointer border-2 flex justify-center w-full rounded-lg border-base-content/20 hover:border-primary transition-colors overflow-hidden",
+                { "border-primary": theme === t }
               )}
             >
-              <div
-                className="flex gap-2 bg-transparent flex-wrap items-center justify-center"
-                data-theme={t}
-              >
-                {Array.from({ length: 5 }).map((_, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className={classNames("size-4", {
-                        "bg-primary": i === 0,
-                        "bg-secondary": i === 1,
-                        "bg-accent": i === 2,
-                        "bg-neutral": i === 3,
-                        "bg-info": i === 4,
-                        "bg-success": i === 5,
-                      })}
-                    />
-                  );
-                })}
+              <div className="flex flex-col items-center w-1/4 shrink-0">
+                <div className="bg-base-200 h-4 w-full flex-1"></div>
+                <div className="bg-base-300 h-4 w-full flex-1"></div>
               </div>
 
-              <span className="capitalize font-medium">{t}</span>
+              <div className="bg-base-100 w-full p-4">
+                <div className="capitalize text-xs font-medium mb-2">{t}</div>
+
+                <div className="flex gap-2 bg-transparent flex-wrap items-center justify-center">
+                  {Array.from({ length: 4 }).map((_, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className={classNames(
+                          "flex aspect-square w-5 items-center justify-center rounded lg:w-6",
+                          {
+                            "bg-primary text-primary-content": i === 0,
+                            "bg-secondary text-secondary-content": i === 1,
+                            "bg-accent text-accent-content": i === 2,
+                            "bg-neutral text-neutral-content": i === 3,
+                          }
+                        )}
+                      >
+                        А
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </button>
           );
         })}

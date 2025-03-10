@@ -1,4 +1,4 @@
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, MessagesSquare, Settings, User } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Headline } from "@/components/Headline";
@@ -32,6 +32,20 @@ export const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-2">
+              <div className="tooltip tooltip-bottom" data-tip="Settings">
+                <NavLink
+                  to={"/rooms"}
+                  className={({ isActive }) => {
+                    return classNames("btn btn-sm gap-2 transition-colors", {
+                      "btn-primary": isActive,
+                    });
+                  }}
+                >
+                  <MessagesSquare className="w-4 h-4" />
+                  <span className="hidden sm:inline">Rooms</span>
+                </NavLink>
+              </div>
+
               <div className="tooltip tooltip-bottom" data-tip="Settings">
                 <NavLink
                   to={"/settings"}

@@ -6,6 +6,7 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ChatPage } from "./pages/ChatPage";
 import { EmptyChat } from "./pages/EmptyChat";
+import { RoomsPage } from "./pages/RoomsPage";
 
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
@@ -14,6 +15,7 @@ import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import { AuthLayout } from "./layouts/AuthLayout";
 import { MainLayout } from "./layouts/MainLayout";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 function App() {
   const { user, checkAuth, isCheckingAuth } = useAuthStore();
@@ -49,17 +51,27 @@ function App() {
         <Route element={<MainLayout />}>
           <Route
             path="/"
-            element={user ? <HomePage /> : <Navigate to="/login" />}
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
           >
             <Route index element={<EmptyChat />} />
             <Route path="chat/:userId" element={<ChatPage />} />
           </Route>
 
+          <Route to="/rooms" element={<RoomsPage />} />
+
           <Route path="/settings" element={<SettingsPage />} />
 
           <Route
             path="/profile"
-            element={user ? <ProfilePage /> : <Navigate to="/login" />}
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
           />
         </Route>
       </Routes>

@@ -12,6 +12,7 @@ const io = new Server(server, {
 });
 
 const userSocketMap = {};
+const roomUsers = {};
 
 export const getReceiverSocketId = (receiverId) => {
   return userSocketMap[receiverId];
@@ -23,6 +24,21 @@ io.on("connection", (socket) => {
   if (userId) {
     userSocketMap[userId] = socket.id;
   }
+
+  socket.on("joinRoom", ({ roomId, userId }) => {
+    socket.join(roomId);
+
+    if (!roomUsers[roomId]) {
+      roomUsers[roomId] = new Set();
+    }
+
+    roomUsers[roomId].add(userId);
+
+    io.to(roomId).emit("roomUsers", {
+      room: roomId,
+      users: Array.from(roomUsers[roomId]),
+    });
+  });
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
