@@ -7,9 +7,15 @@ import { useAuthStore } from "@/store/useAuthStore";
 import classNames from "classnames";
 import { MessageItem } from "@/components/chat/MessageItem";
 import toast from "react-hot-toast";
+import { useAutoResizeTextarea } from "@/hooks/useAutoResizeTextarea";
 
 export const ChatPage = () => {
   const endContainerRef = useRef(null);
+
+  const { textareaRef, adjustHeight } = useAutoResizeTextarea({
+    minHeight: 52,
+    maxHeight: 150,
+  });
 
   const {
     getMessages,
@@ -63,10 +69,9 @@ export const ChatPage = () => {
       image: imagePreview,
     });
 
-    console.log({ message, imagePreview });
-
     setMessage("");
     setImagePreview(null);
+    adjustHeight(true);
 
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -127,15 +132,15 @@ export const ChatPage = () => {
 
   return (
     <>
-      <div>
-        <Link to="/" className="gap-1.5 mb-4 btn btn-sm btn-primary">
-          <ChevronLeft className="size-4" />
-
-          <span className="capitalize">back</span>
-        </Link>
-      </div>
-
       <div className="flex flex-col min-h-full">
+        <div>
+          <Link to="/" className="gap-1.5 mb-4 btn btn-sm btn-primary">
+            <ChevronLeft className="size-4" />
+
+            <span className="capitalize">back</span>
+          </Link>
+        </div>
+
         {isLoadingMessages ? (
           <MessagesSkeleton count={4} className="w-full" />
         ) : (
@@ -203,12 +208,14 @@ export const ChatPage = () => {
                   />
 
                   <textarea
+                    ref={textareaRef}
                     placeholder="Type a message..."
                     value={message}
                     onChange={(e) => {
                       handleTyping(e);
+                      adjustHeight();
                     }}
-                    className="input w-full min-h-10 max-h-20"
+                    className="input w-full"
                   />
 
                   <div className="flex gap-2">

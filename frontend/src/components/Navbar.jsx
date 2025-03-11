@@ -32,7 +32,7 @@ export const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <div className="tooltip tooltip-bottom" data-tip="Settings">
+              <div className="tooltip tooltip-bottom" data-tip="Rooms">
                 <NavLink
                   to={"/rooms"}
                   className={({ isActive }) => {

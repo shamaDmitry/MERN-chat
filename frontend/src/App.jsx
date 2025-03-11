@@ -61,7 +61,7 @@ function App() {
             <Route path="chat/:userId" element={<ChatPage />} />
           </Route>
 
-          <Route to="/rooms" element={<RoomsPage />} />
+          <Route path="/rooms" element={<RoomsPage />} />
 
           <Route path="/settings" element={<SettingsPage />} />
 
