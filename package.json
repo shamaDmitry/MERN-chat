@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "cd server && npm install && cd ../frontend && npm install && npm run build",
+    "build": "cd server && npm install && cd ../frontend && npm install && npm run build && cp -r dist ../server/public",
     "start": "cd server && npm start"
   },
   "keywords": [],
