@@ -35,7 +35,7 @@ export const RoomPage = () => {
         </div>
 
         <Suspense fallback={<div>loading</div>}>
-          <RoomDetail />
+          <RoomDetail roomId={roomId} />
         </Suspense>
       </div>
     );

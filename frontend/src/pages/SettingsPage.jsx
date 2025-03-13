@@ -3,6 +3,19 @@ import { THEMES } from "../consts";
 import { useThemeStore } from "../store/useThemeStore";
 import { Headline } from "../components/Headline";
 
+const getContentClass = (index) => {
+  switch (index) {
+    case 0:
+      return "Primary";
+    case 1:
+      return "Secondary";
+    case 2:
+      return "Accent";
+    case 3:
+      return "Neutral";
+  }
+};
+
 export const SettingsPage = () => {
   const { theme, setTheme } = useThemeStore();
 
@@ -20,16 +33,29 @@ export const SettingsPage = () => {
               data-theme={t}
               onClick={() => setTheme(t)}
               className={classNames(
-                "cursor-pointer border-2 flex justify-center w-full rounded-lg border-base-content/20 hover:border-primary transition-colors overflow-hidden",
+                "cursor-pointer border-2 flex justify-center w-full rounded-lg border-base-content/20 hover:border-primary transition-colors",
                 { "border-primary": theme === t }
               )}
             >
-              <div className="flex flex-col items-center w-1/4 shrink-0">
-                <div className="bg-base-200 h-4 w-full flex-1"></div>
-                <div className="bg-base-300 h-4 w-full flex-1"></div>
+              <div className="flex flex-col items-center w-1/4 shrink-0 h-full">
+                <div
+                  data-theme={t}
+                  className="tooltip rounded-tl-lg tooltip-left bg-base-200 h-4 w-full flex-1"
+                  data-tip={"base-200"}
+                >
+                  <div className="bg-base-200" />
+                </div>
+
+                <div
+                  data-theme={t}
+                  className="tooltip rounded-bl-lg tooltip-left bg-base-300 h-4 w-full flex-1"
+                  data-tip={"base-300"}
+                >
+                  <div className="bg-base-300" />
+                </div>
               </div>
 
-              <div className="bg-base-100 w-full p-4">
+              <div className="rounded-lg bg-base-100 w-full p-4">
                 <div className="capitalize text-xs font-medium mb-2">{t}</div>
 
                 <div className="flex gap-2 bg-transparent flex-wrap items-center justify-center">
@@ -37,17 +63,27 @@ export const SettingsPage = () => {
                     return (
                       <div
                         key={i}
-                        className={classNames(
-                          "flex aspect-square w-5 items-center justify-center rounded lg:w-6",
-                          {
-                            "bg-primary text-primary-content": i === 0,
-                            "bg-secondary text-secondary-content": i === 1,
-                            "bg-accent text-accent-content": i === 2,
-                            "bg-neutral text-neutral-content": i === 3,
-                          }
-                        )}
+                        className={classNames("tooltip tooltip-top", {
+                          "tooltip-primary": i === 0,
+                          "tooltip-secondary": i === 1,
+                          "tooltip-accent": i === 2,
+                          "tooltip-neutral": i === 3,
+                        })}
+                        data-tip={getContentClass(i)}
                       >
-                        А
+                        <div
+                          className={classNames(
+                            "flex aspect-square w-5 items-center justify-center rounded lg:w-6",
+                            {
+                              "bg-primary text-primary-content": i === 0,
+                              "bg-secondary text-secondary-content": i === 1,
+                              "bg-accent text-accent-content": i === 2,
+                              "bg-neutral text-neutral-content": i === 3,
+                            }
+                          )}
+                        >
+                          А
+                        </div>
                       </div>
                     );
                   })}

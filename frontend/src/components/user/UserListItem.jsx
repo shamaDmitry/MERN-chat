@@ -1,11 +1,14 @@
 import classNames from "classnames";
 import { User } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const UserListItem = ({ currentUser, isOnline, to }) => {
+  const { user } = useAuthStore();
+
   const content = (
     <>
-      <div className="relative">
+      <div className="relative shrink-0">
         {currentUser.profilePic ? (
           <img
             src={currentUser.profilePic}
@@ -17,7 +20,6 @@ export const UserListItem = ({ currentUser, isOnline, to }) => {
             <User className="size-5" />
           </div>
         )}
-
         <span
           className={classNames(
             "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-base-100",
@@ -30,7 +32,12 @@ export const UserListItem = ({ currentUser, isOnline, to }) => {
       </div>
 
       <div className="block text-left min-w-0">
-        <div className="font-medium truncate">{currentUser.fullName}</div>
+        <div className="font-medium truncate" title={`${currentUser.fullName}`}>
+          {currentUser.fullName}{" "}
+          {currentUser._id === user._id && (
+            <span className="text-zinc-400 text-sm">You</span>
+          )}
+        </div>
         <div className="text-sm text-zinc-400">
           {isOnline ? "Online" : "Offline"}
         </div>

@@ -151,8 +151,6 @@ export const ChatPage = () => {
               )}
 
               {messages.map((message) => {
-                console.log("message", message);
-
                 return (
                   <MessageItem
                     key={message._id}

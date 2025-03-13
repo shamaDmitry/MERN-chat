@@ -1,6 +1,7 @@
 import { Headline } from "@/components/Headline";
+import { UserList } from "./UserList";
 
-export const RoomDetail = () => {
+export const RoomDetail = ({ roomId }) => {
   return (
     <div>
       <div className="tabs tabs-border">
@@ -29,7 +30,7 @@ export const RoomDetail = () => {
           </Headline>
 
           <div className="border border-base-300 rounded-lg min-h-80 p-5 shadow-xl">
-            Users
+            <UserList roomId={roomId} />
           </div>
         </div>
       </div>

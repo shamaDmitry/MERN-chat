@@ -3,13 +3,13 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { User2 } from "lucide-react";
 import dayjs from "dayjs";
 
-export const MessageItem = ({ message, receiver }) => {
+export const MessageItem = ({ message, receiver, className }) => {
   const { user } = useAuthStore();
   const isCurrentUser = message.senderId === user._id;
 
   return (
     <div
-      className={classNames("chat", {
+      className={classNames(`chat ${className}`, {
         "chat-start": !isCurrentUser,
         "chat-end": isCurrentUser,
       })}
