@@ -26,9 +26,11 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await axiosInstance("auth/check-auth");
 
-      set({ user: res.data });
+      if (res.status === 200) {
+        set({ user: res.data });
 
-      get().connectSocket();
+        get().connectSocket();
+      }
     } catch (error) {
       console.log("useAuthStore error", error);
 

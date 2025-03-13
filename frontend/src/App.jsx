@@ -7,6 +7,7 @@ import { ProfilePage } from "./pages/ProfilePage";
 import { ChatPage } from "./pages/ChatPage";
 import { EmptyChat } from "./pages/EmptyChat";
 import { RoomsPage } from "./pages/RoomsPage";
+import { RoomPage } from "./pages/RoomPage";
 
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
@@ -61,7 +62,22 @@ function App() {
             <Route path="chat/:userId" element={<ChatPage />} />
           </Route>
 
-          <Route path="/rooms" element={<RoomsPage />} />
+          <Route
+            path="/rooms"
+            element={
+              <ProtectedRoute>
+                <RoomsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="rooms/:roomId"
+            element={
+              <ProtectedRoute>
+                <RoomPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="/settings" element={<SettingsPage />} />
 

@@ -1,10 +1,9 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useChat } from "../store/useChat";
 import { useEffect } from "react";
-import { User } from "lucide-react";
-import classNames from "classnames";
 import { useAuthStore } from "../store/useAuthStore";
 import { Headline } from "../components/Headline";
+import { UserListItem } from "../components/user/UserListItem";
 
 export const HomePage = () => {
   const { usersForSidebar, getUsersForSidebar, isLoadingUsers } = useChat();
@@ -47,46 +46,10 @@ export const HomePage = () => {
                 <div className="mb-5">
                   <Headline tag="h5">You:</Headline>
 
-                  <div className="flex items-center gap-2 py-2 px-2 rounded-md">
-                    <div className="relative">
-                      {currentUser.profilePic ? (
-                        <img
-                          src={currentUser.profilePic}
-                          alt={currentUser.fullName}
-                          className="size-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="size-10 rounded-full object-cover bg-base-300 flex items-center justify-center">
-                          <User className="size-5" />
-                        </div>
-                      )}
-
-                      <span
-                        className={classNames(
-                          "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-base-100",
-                          {
-                            "bg-green-500": onlineUsers.includes(
-                              currentUser._id
-                            ),
-                            "bg-red-500": !onlineUsers.includes(
-                              currentUser._id
-                            ),
-                          }
-                        )}
-                      />
-                    </div>
-
-                    <div className="block text-left min-w-0">
-                      <div className="font-medium truncate">
-                        {currentUser.fullName}
-                      </div>
-                      <div className="text-sm text-zinc-400">
-                        {onlineUsers.includes(currentUser._id)
-                          ? "Online"
-                          : "Offline"}
-                      </div>
-                    </div>
-                  </div>
+                  <UserListItem
+                    currentUser={currentUser}
+                    isOnline={onlineUsers.includes(currentUser._id)}
+                  />
                 </div>
 
                 <div className="mb-5">
@@ -95,53 +58,12 @@ export const HomePage = () => {
                   <ul className="menu p-0 text-base-content w-full">
                     {usersForSidebar.map((user) => {
                       return (
-                        <NavLink
-                          to={`/chat/${user._id}`}
+                        <UserListItem
                           key={user._id}
-                          className={({ isActive }) => {
-                            return classNames({
-                              "flex items-center gap-2 py-2 px-2 rounded-md hover:bg-base-200": true,
-                              "bg-base-200": isActive,
-                            });
-                          }}
-                        >
-                          <div className="relative">
-                            {user.profilePic ? (
-                              <img
-                                src={user.profilePic}
-                                alt={user.fullName}
-                                className="size-10 rounded-full object-cover"
-                              />
-                            ) : (
-                              <div className="size-10 rounded-full object-cover bg-base-300 flex items-center justify-center">
-                                <User className="size-5" />
-                              </div>
-                            )}
-
-                            <span
-                              className={classNames(
-                                "absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-base-100",
-                                {
-                                  "bg-green-500": onlineUsers.includes(
-                                    user._id
-                                  ),
-                                  "bg-red-500": !onlineUsers.includes(user._id),
-                                }
-                              )}
-                            />
-                          </div>
-
-                          <div className="block text-left min-w-0">
-                            <div className="font-medium truncate">
-                              {user.fullName}
-                            </div>
-                            <div className="text-sm text-zinc-400">
-                              {onlineUsers.includes(user._id)
-                                ? "Online"
-                                : "Offline"}
-                            </div>
-                          </div>
-                        </NavLink>
+                          to={`/chat/${user._id}`}
+                          currentUser={user}
+                          isOnline={onlineUsers.includes(user._id)}
+                        />
                       );
                     })}
                   </ul>
