@@ -6,23 +6,26 @@ import userRoutes from "./routes/user.routes.js";
 import roomRoutes from "./routes/room.routes.js";
 import dotenv from "dotenv";
 import connectDB from "./lib/db.js";
-import path from "path";
 import cors from "cors";
 import { app, server } from "./lib/socket.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
 
-dotenv.config();
+// dotenv.config();
+dotenv.config({
+  path: `.env.${process.env.NODE_ENV}`,
+  debug: true,
+});
+
+console.log("FRONTEND_URL", process.env.FRONTEND_URL);
 
 const PORT = process.env.PORT || 3000;
-
-const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -32,7 +35,7 @@ app.use("/api/message", messageRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/room", roomRoutes);
 
-app.use("/test", (req, res) => {
+app.use("/", (req, res) => {
   return res.status(200).json({ message: "Hello World!" });
 });
 
@@ -64,16 +67,6 @@ app.use("/seed", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("public"));
-
-  app.get("*", (req, res) => {
-    console.log("path", path.join(__dirname, "public", "index.html"));
-
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-  });
-}
 
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}. Ready to accept requests!`);

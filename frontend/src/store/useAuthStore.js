@@ -13,8 +13,6 @@ const defaultState = {
   socket: null,
 };
 
-const BASE_URL = "http://localhost:5000";
-
 export const useAuthStore = create((set, get) => ({
   ...defaultState,
 
@@ -126,7 +124,7 @@ export const useAuthStore = create((set, get) => ({
 
     if (!user || get().socket?.connected) return;
 
-    const socket = io(BASE_URL, {
+    const socket = io(import.meta.env.VITE_API_URL, {
       query: { userId: user._id },
     });
 

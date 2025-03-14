@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "dev": "SET NODE_ENV=development&nodemon index.js",
+    "start": "SET NODE_ENV=production&node index.js"
   },
   "keywords": [],
   "author": "",

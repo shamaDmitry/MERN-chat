@@ -13,6 +13,9 @@ export const LoginPage = () => {
             <div className="flex flex-col items-center gap-2 group">
               <Logo />
 
+              <div>{import.meta.env.VITE_API_URL}</div>
+              <div>{import.meta.env.MODE}</div>
+
               <Headline className="mt-2">Welcome Back</Headline>
 
               <p className="text-base-content/60">Sign in to your account</p>
