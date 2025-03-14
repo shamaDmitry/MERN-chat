@@ -11,24 +11,24 @@ import { app, server } from "./lib/socket.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
 
-// dotenv.config();
 dotenv.config({
-  path: `.env.${process.env.NODE_ENV}`,
   debug: true,
 });
 
-console.log("FRONTEND_URL", process.env.FRONTEND_URL);
-
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: `${
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:5173"
+        : "https://mern-chat-front-iota.vercel.app"
+    }`,
     credentials: true,
   })
 );
+app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
@@ -36,13 +36,11 @@ app.use("/api/users", userRoutes);
 app.use("/api/room", roomRoutes);
 
 app.use("/", (req, res) => {
-  return res
-    .status(200)
-    .json({
-      message: "Hello World!",
-      front: process.env.FRONTEND_URL,
-      mode: process.env.NODE_ENV,
-    });
+  return res.status(200).json({
+    message: "Hello World!",
+    front: process.env.FRONTEND_URL,
+    mode: process.env.NODE_ENV,
+  });
 });
 
 app.use("/seed", async (req, res) => {
