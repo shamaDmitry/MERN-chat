@@ -10,12 +10,14 @@ import cors from "cors";
 import { app, server } from "./lib/socket.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
+import path from "path";
 
 dotenv.config({
   debug: true,
 });
 
 const PORT = process.env.PORT || 3000;
+const __dirname = path.resolve();
 
 app.use(
   cors({
@@ -35,13 +37,13 @@ app.use("/api/message", messageRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/room", roomRoutes);
 
-app.use("/", (req, res) => {
-  return res.status(200).json({
-    message: "Hello World!",
-    front: process.env.FRONTEND_URL,
-    mode: process.env.NODE_ENV,
-  });
-});
+// app.use("/", (req, res) => {
+//   return res.status(200).json({
+//     message: "Hello World!",
+//     front: process.env.FRONTEND_URL,
+//     mode: process.env.NODE_ENV,
+//   });
+// });
 
 app.use("/seed", async (req, res) => {
   try {
@@ -71,6 +73,14 @@ app.use("/seed", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}. Ready to accept requests!`);
