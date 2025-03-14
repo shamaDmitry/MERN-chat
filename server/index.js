@@ -36,7 +36,13 @@ app.use("/api/users", userRoutes);
 app.use("/api/room", roomRoutes);
 
 app.use("/", (req, res) => {
-  return res.status(200).json({ message: "Hello World!" });
+  return res
+    .status(200)
+    .json({
+      message: "Hello World!",
+      front: process.env.FRONTEND_URL,
+      mode: process.env.NODE_ENV,
+    });
 });
 
 app.use("/seed", async (req, res) => {
