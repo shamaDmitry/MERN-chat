@@ -5,15 +5,14 @@ import express from "express";
 const app = express();
 const server = http.createServer(app);
 
+const FRONTEND_URL =
+  process.env.NODE_ENV !== "production"
+    ? "http://localhost:5173"
+    : "https://mern-chat-wine-seven.vercel.app";
+
 const io = new Server(server, {
   cors: {
-    origin: [
-      `${
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:5173"
-          : "https://mern-chat-front-iota.vercel.app"
-      }`,
-    ],
+    origin: [FRONTEND_URL, "http://localhost:4173"],
   },
 });
 

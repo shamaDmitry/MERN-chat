@@ -11,6 +11,11 @@ import { app, server } from "./lib/socket.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
 
+const FRONTEND_URL =
+  process.env.NODE_ENV !== "production"
+    ? "http://localhost:5173"
+    : "https://mern-chat-wine-seven.vercel.app";
+
 dotenv.config({
   debug: true,
 });
@@ -19,11 +24,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: `${
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:5173"
-        : "https://mern-chat-front-iota.vercel.app"
-    }`,
+    origin: FRONTEND_URL,
     credentials: true,
   })
 );
@@ -37,7 +38,7 @@ app.use("/api/room", roomRoutes);
 
 app.use("/", (req, res) => {
   return res.status(200).json({
-    message: "Hello World!",
+    message: "MERN-chat back-end",
     front: process.env.FRONTEND_URL,
     mode: process.env.NODE_ENV,
   });
@@ -74,5 +75,7 @@ app.use("/seed", async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}. Ready to accept requests!`);
+  console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+
   connectDB();
 });

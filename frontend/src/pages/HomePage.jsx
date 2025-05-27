@@ -7,6 +7,7 @@ import { UserListItem } from "../components/user/UserListItem";
 
 export const HomePage = () => {
   const { usersForSidebar, getUsersForSidebar, isLoadingUsers } = useChat();
+
   const { user: currentUser, onlineUsers } = useAuthStore();
 
   useEffect(() => {
