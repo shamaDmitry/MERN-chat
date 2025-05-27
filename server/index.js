@@ -11,11 +11,6 @@ import { app, server } from "./lib/socket.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
 
-// const FRONTEND_URL =
-//   process.env.NODE_ENV !== "production"
-//     ? "http://localhost:5173"
-//     : "https://mern-chat-wine-seven.vercel.app";
-
 dotenv.config({
   debug: true,
 });
