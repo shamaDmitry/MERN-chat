@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Headline } from "../components/Headline";
 import { UserListItem } from "../components/user/UserListItem";
+import { useMemo } from "react";
 
 export const HomePage = () => {
   const { usersForSidebar, getUsersForSidebar, isLoadingUsers } = useChat();
@@ -13,6 +14,19 @@ export const HomePage = () => {
   useEffect(() => {
     getUsersForSidebar();
   }, [getUsersForSidebar]);
+
+  const sortedUsers = useMemo(() => {
+    return [...usersForSidebar].sort((a, b) => {
+      const isAOnline = onlineUsers.includes(a._id);
+      const isBOnline = onlineUsers.includes(b._id);
+
+      if (isAOnline && !isBOnline) return -1;
+      if (!isAOnline && isBOnline) return 1;
+
+      // If both have the same online status, sort alphabetically by name
+      return a.fullName.localeCompare(b.fullName);
+    });
+  }, [usersForSidebar, onlineUsers]);
 
   return (
     <div className="container">
@@ -57,7 +71,7 @@ export const HomePage = () => {
                   <Headline tag="h5">Users:</Headline>
 
                   <ul className="menu p-0 text-base-content w-full">
-                    {usersForSidebar.map((user) => {
+                    {sortedUsers.map((user) => {
                       return (
                         <UserListItem
                           key={user._id}
