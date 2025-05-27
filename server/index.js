@@ -11,10 +11,10 @@ import { app, server } from "./lib/socket.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
 
-const FRONTEND_URL =
-  process.env.NODE_ENV !== "production"
-    ? "http://localhost:5173"
-    : "https://mern-chat-wine-seven.vercel.app";
+// const FRONTEND_URL =
+//   process.env.NODE_ENV !== "production"
+//     ? "http://localhost:5173"
+//     : "https://mern-chat-wine-seven.vercel.app";
 
 dotenv.config({
   debug: true,
@@ -22,9 +22,21 @@ dotenv.config({
 
 const PORT = process.env.PORT || 3000;
 
+var whitelist = [
+  "http://localhost:5173",
+  "https://mern-chat-wine-seven.vercel.app",
+  "http://localhost:4173",
+];
+
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
