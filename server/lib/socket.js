@@ -58,6 +58,18 @@ io.on("connection", (socket) => {
     });
   });
 
+  // Handle marking messages as read
+  socket.on("markMessagesAsRead", ({ senderId }) => {
+    const receiverId = userId;
+    if (receiverId) {
+      // Emit to the sender that their messages have been read
+      const senderSocketId = getReceiverSocketId(senderId);
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("messagesRead", { receiverId });
+      }
+    }
+  });
+
   socket.on("disconnect", () => {
     delete userSocketMap[userId];
 

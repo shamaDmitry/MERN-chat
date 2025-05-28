@@ -6,13 +6,18 @@ import { Headline } from "../components/Headline";
 import { UserListItem } from "../components/user/UserListItem";
 
 export const HomePage = () => {
-  const { usersForSidebar, getUsersForSidebar, isLoadingUsers } = useChat();
-
+  const {
+    usersForSidebar,
+    getUsersForSidebar,
+    isLoadingUsers,
+    getUnreadCount,
+  } = useChat();
   const { user: currentUser, onlineUsers } = useAuthStore();
 
   useEffect(() => {
     getUsersForSidebar();
-  }, [getUsersForSidebar]);
+    getUnreadCount();
+  }, [getUsersForSidebar, getUnreadCount]);
 
   return (
     <div className="container">
@@ -64,6 +69,7 @@ export const HomePage = () => {
                           to={`/chat/${user._id}`}
                           currentUser={user}
                           isOnline={onlineUsers.includes(user._id)}
+                          userId={user._id}
                         />
                       );
                     })}

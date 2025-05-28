@@ -2,9 +2,16 @@ import classNames from "classnames";
 import { User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useChat } from "@/store/useChat";
 
-export const UserListItem = ({ currentUser, isOnline, to }) => {
+export const UserListItem = ({ currentUser, isOnline, to, userId }) => {
   const { user } = useAuthStore();
+  const { unreadCounts } = useChat();
+  const unreadCount = unreadCounts[userId] || 0;
+
+  console.log("unreadCounts", unreadCounts);
+  console.log("userId", userId);
+  console.log("unreadCount", unreadCount);
 
   const content = (
     <>
@@ -29,6 +36,11 @@ export const UserListItem = ({ currentUser, isOnline, to }) => {
             }
           )}
         />
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-primary text-primary-content text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        )}
       </div>
 
       <div className="block text-left min-w-0">

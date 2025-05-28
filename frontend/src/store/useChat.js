@@ -10,6 +10,7 @@ const defaultState = {
   messages: [],
   usersForSidebar: [],
   receiver: null,
+  unreadCounts: {},
 };
 
 export const useChat = create((set, get) => ({
@@ -74,15 +75,34 @@ export const useChat = create((set, get) => ({
 
     socket.on("receiveMessage", (newMessage) => {
       const { messages } = get();
-
       set({ messages: [...messages, newMessage] });
+    });
+
+    // Listen for unread count updates
+    socket.on("unreadCountUpdate", ({ unreadCounts }) => {
+      set({ unreadCounts });
+    });
+
+    // Listen for messages being read
+    socket.on("messagesRead", ({ receiverId }) => {
+      // Update messages in the current chat if the receiver is the current user
+      const { receiver } = get();
+      if (receiver && receiver._id === receiverId) {
+        const { messages } = get();
+        const updatedMessages = messages.map((msg) => ({
+          ...msg,
+          read: true,
+        }));
+        set({ messages: updatedMessages });
+      }
     });
   },
 
   unSubscribeToMessages: () => {
     const socket = useAuthStore.getState().socket;
-
     socket.off("receiveMessage");
+    socket.off("unreadCountUpdate");
+    socket.off("messagesRead");
   },
 
   setReceiver: (receiver) => {
@@ -100,6 +120,17 @@ export const useChat = create((set, get) => ({
       console.log("getMessage", error);
     } finally {
       set({ isLoadingMessages: false });
+    }
+  },
+
+  getUnreadCount: async () => {
+    try {
+      const res = await axiosInstance("message/unread/count");
+      if (res.status === 200) {
+        set({ unreadCounts: res.data.unreadCounts });
+      }
+    } catch (error) {
+      console.log("getUnreadCount error", error);
     }
   },
 }));

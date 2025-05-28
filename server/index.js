@@ -26,8 +26,6 @@ var whitelist = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      console.log("origin", origin);
-
       if (whitelist.indexOf(origin) !== -1 || !origin) {
         callback(null, true);
       } else {
